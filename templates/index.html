@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Combined Page</title>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Boxicons CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.0/css/boxicons.min.css">
+<style>
+/* Styles for side navigation */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.sidenav {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: -250px;
+    background-color: #333;
+    overflow-x: hidden;
+    transition: 0.3s;
+    padding-top: 60px;
+}
+
+
+  #name {
+      position: absolute;
+      background-color: rgb(255, 255, 255);
+      width: fit-content;
+      opacity: 0;
+      border-radius: 5px;
+      border: 3px solid rgb(245, 128, 128);
+      padding: 0px 5px;
+      font-size: 1.5rem;
+
+  }
+
+  svg path {
+      cursor: pointer;
+  }
+
+.sidenav a {
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #fff;
+    display: block;
+}
+
+.sidenav a:hover {
+    background-color: #555;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+.main {
+    transition: margin-left 0.3s;
+    margin-left: 0;
+}
+
+.arrow-container {
+    position: fixed;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background-color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.arrow {
+    cursor: pointer;
+    font-size: 24px;
+    color: #000;
+}
+
+.arrow.open {
+    transform: rotate(180deg);
+}
+
+/* Styles for animated canvas dots */
+#hero {
+    top: 0vh;
+    left: 0vw;
+    height: 100vh;
+    width: 100vw;
+    background: linear-gradient(210deg, rgba(26, 188, 156, 1) 0%, rgba(142, 68, 173, 1) 100%);
+}
+</style>
+</head>
+<body>
+
+
+<!-- Side Navigation -->
+<div class="sidenav" id="mySidenav">
+    <a href="/" target="_blank">Home</a>
+    <a href="/extract" target="_blank">Publish Your RFP</a>
+    <a href="/fakedata" target="_blank">Finances</a>
+    <a href="/budgetbar" target="_blank">Statistics</a>
+    <a href="/rank" target="_blank">Rank</a>
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+</div>
+
+<!-- Arrow Container -->
+<div class="arrow-container">
+    <span class="arrow" onclick="toggleNav()">►</span>
+</div>
+
+<!-- Canvas for Animated Dots -->
+<div id="hero"><h1>SMD CONSTRUCTIONS</h1>
+  <img src="{{url_for('static', filename='1.jpg')}}" align="center" width="100%" height="100%">" />
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// JavaScript for side navigation
+function toggleNav() {
+    var sidenav = document.getElementById("mySidenav");
+    var arrow = document.querySelector(".arrow");
+
+    if (sidenav.style.left === "0px") {
+        sidenav.style.left = "-250px";
+        arrow.classList.remove("open");
+    } else {
+        sidenav.style.left = "0px";
+        arrow.classList.add("open");
+    }
+}
+
+function closeNav() {
+    document.getElementById("mySidenav").style.left = "-250px";
+    document.querySelector(".arrow").classList.remove("open");
+}
+
+// JavaScript for animated canvas dots
+var c = document.createElement('canvas');
+c.id = "canvasBackground";
+
+var parent = document.getElementById('hero');
+parent.appendChild(c);
+
+var ctx = document.getElementById('canvasBackground').getContext('2d');
+
+var dotCount;
+var dotArray = [];
+var radius, x, y;
+
+function createDots(dotCount) {
+    for (var i = 0; i < dotCount; i++) {
+        radius = Math.floor((Math.random() * 3) + 1);
+        x = Math.random() * (c.width - radius * 2) + radius;
+        y = Math.random() * (c.height - radius * 2) + radius;
+        xVelocity = ((Math.random() * radius) - 1);
+        yVelocity = ((Math.random() * radius) - 1);
+        fillColor = 'white';
+        shadowBlur = 10;
+        shadowColor = 'white';
+        globalAlpha = ((Math.random() * 5) + 5)/10;
+        dotArray.push(new Dot(radius, x, y, xVelocity, yVelocity, fillColor, shadowBlur, shadowColor, globalAlpha));
+    }
+    animate();
+}
+
+function Dot(r, x, y, xV, yV, fC, sB, sC, gA) {
+    this.radius = r;
+    this.x = x;
+    this.y = y;
+    this.xVelocity = xV;
+    this.yVelocity = yV;
+    this.fillColor = fC;
+    this.shadowBlur = sB;
+    this.shadowColor = sC;
+    this.globalAlpha = gA;
+
+    this.updateDots = function () {
+
+        if (x + this.radius > c.width || x - this.radius < 0)
+            this.xVelocity = -this.xVelocity;
+        if (y + this.radius > c.height || y - this.radius < 0)
+            this.yVelocity = -this.yVelocity;
+        x += this.xVelocity;
+        y += this.yVelocity;      
+
+        this.drawDots();
+    }
+
+    this.drawDots = function () {
+        ctx.beginPath();
+        ctx.arc(x, y, this.radius, 0, Math.PI * 2, false);
+        ctx.shadowBlur = this.shadowBlur;
+        ctx.shadowColor = this.shadowColor;
+        ctx.globalAlpha = this.globalAlpha;
+        ctx.fillStyle = this.fillColor;
+        ctx.fill();
+    }
+}
+
+function animate(){
+    requestAnimationFrame(animate);
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    for(var i = 0; i < dotArray.length; i++){
+        dotArray[i].updateDots();
+    }
+}
+
+function setValues() {
+    c.width  = parent.offsetWidth;
+    c.height = parent.offsetHeight;
+    dotArray = [];
+    dotCount = Math.floor((c.width/2)*(c.height/2)/2000);
+    createDots(dotCount);
+}
+
+document.body.onload = function () {
+    setValues();
+}
+
+window.addEventListener('resize', function(){
+    setValues();
+});
+</script>
+
+</body>
+</html>
